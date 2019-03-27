@@ -14,7 +14,10 @@ public:
     void Bind() const;
     void UnBind() const;
 
+    void SetUniform1i(const std::string& u_name, int v);
+    void SetUniform1f(const std::string& u_name, float v);
     void SetUniform4f(const std::string& u_name, float v0, float v1, float v2, float v3);
+
 private:
     unsigned int m_rendererID;
 

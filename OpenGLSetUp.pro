@@ -22,7 +22,9 @@ SOURCES += main.cpp \
     vertexarray.cpp \
     shader.cpp \
     opengl_debug.cpp \
-    renderer.cpp
+    renderer.cpp \
+    texture.cpp \
+    stb_image.cpp
 TEMPLATE = app
 
 QMAKE_LFLAGS += -F/System/Library/Frameworks/
@@ -37,15 +39,16 @@ LIBS += -framework OpenGL \
 INCLUDEPATH += /usr/local/include
 DEPENDPATH += /usr/local/include
 
-copydata.commands = $(COPY_DIR) $$PWD/shader $$OUT_PWD
+copydata.commands = $(COPY_DIR) $$PWD/res $$OUT_PWD
 first.depends = $(first) copydata
 export(first.depends)
 export(copydata.commands)
 QMAKE_EXTRA_TARGETS += first copydata
 
 DISTFILES += \
-    shader/shader.frag \
-    shader/shader.vert
+    res/shader/shader.frag \
+    res/shader/shader.vert \
+    res/texture/image.png
 
 HEADERS += \
     vertexbuffer.h \
@@ -54,7 +57,9 @@ HEADERS += \
     vertexbufferlayout.h \
     shader.h \
     opengl_debug.h \
-    renderer.h
+    renderer.h \
+    stb_image.h \
+    texture.h
 
 #fix warning when cast to void*
 #QMAKE_CXXFLAGS += -Wno-int-to-void-pointer-cast

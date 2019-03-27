@@ -4,6 +4,7 @@
 #include "vertexbufferlayout.h"
 #include "shader.h"
 #include "renderer.h"
+#include "texture.h"
 
 // Window dimensions
 const int WIDTH = 800, HEIGHT = 600;
@@ -48,15 +49,17 @@ int main()
     }
 
     // Define the viewport dimensions
-    glViewport( 0, 0, screenWidth, screenHeight );
+    GLCall(glViewport( 0, 0, screenWidth, screenHeight ));
+    GLCall(glEnable( GL_BLEND ));
+    GLCall(glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA ));
 
     // Set up vertex data (and buffer(s)) and attribute pointers
     float vertices[] =
     {
-        -0.5f, -0.5f, 0.0f, // Bottom-Left
-        0.5f, -0.5f, 0.0f, // Bottom-Right
-        0.5f,  0.5f, 0.0f,  // Top-Right
-        -0.5f, 0.5f, 0.0f  // Top-Left
+        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,// Bottom-Left
+        0.5f, -0.5f, 0.0f, 1.0f, 0.0f,// Bottom-Right
+        0.5f,  0.5f, 0.0f, 1.0f, 1.0f,// Top-Right
+        -0.5f, 0.5f, 0.0f, 0.0f, 1.0f  // Top-Left
     };
 
     unsigned int indices[] =
@@ -74,20 +77,26 @@ int main()
 
         VertexBufferLayout layout;
         layout.Push<float>(3);
+        layout.Push<float>(2);
         vao.AddBuffer(vbo, layout);
 
         unsigned int number_of_index = sizeof(indices)/sizeof(unsigned int);
         IndexBuffer ibo(indices, number_of_index);
 
+        //Build and compile shader program
+        Shader shaderProgram("res/shader/shader.vert", "res/shader/shader.frag");
+        shaderProgram.Bind();
+        shaderProgram.SetUniform4f("u_color", 0.8, 0.5, 0.2, 1.0);
+
+        //Load Texture
+        Texture texture("res/texture/image.png");
+
         vbo.UnBind(); // Note that this is allowed, the call to glVertexAttribPointer registered VBO as the currently bound vertex buffer object so afterwards we can safely unbind
         ibo.UnBind();
         vao.UnBind(); // Unbind VAO (it's always a good thing to unbind any buffer/array to prevent strange bugs)
+        shaderProgram.UnBind();
 
-        //Build and compile shader program
-        Shader shaderProgram("shader/shader.vert", "shader/shader.frag");
         Renderer renderer;
-        float r = 0.0f;
-        float delta = 0.05f;
 
         // Game loop
         while ( !glfwWindowShouldClose( window ) )
@@ -101,14 +110,10 @@ int main()
 
             // Draw our first triangle
             shaderProgram.Bind();
-            shaderProgram.SetUniform4f("u_color", r, 0.5, 0.2, 1.0);
+            texture.Bind(0);
+            shaderProgram.SetUniform1i("u_Texture", 0);
 
             renderer.Draw(vao, ibo, shaderProgram);
-            if (r > 1.0f)
-                delta = -0.05f;
-            else if (r < 0.0f)
-                delta = 0.05f;
-            r += delta;
 
             // Swap the screen buffers
             glfwSwapBuffers( window );
