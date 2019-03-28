@@ -24,7 +24,8 @@ SOURCES += main.cpp \
     opengl_debug.cpp \
     renderer.cpp \
     texture.cpp \
-    stb_image.cpp
+    stb_image.cpp \
+
 TEMPLATE = app
 
 QMAKE_LFLAGS += -F/System/Library/Frameworks/
@@ -59,7 +60,8 @@ HEADERS += \
     opengl_debug.h \
     renderer.h \
     stb_image.h \
-    texture.h
+    texture.h \
+
 
 #fix warning when cast to void*
 #QMAKE_CXXFLAGS += -Wno-int-to-void-pointer-cast

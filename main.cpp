@@ -6,6 +6,9 @@
 #include "renderer.h"
 #include "texture.h"
 
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+
 // Window dimensions
 const int WIDTH = 800, HEIGHT = 600;
 
@@ -83,10 +86,14 @@ int main()
         unsigned int number_of_index = sizeof(indices)/sizeof(unsigned int);
         IndexBuffer ibo(indices, number_of_index);
 
+        //Setting MVP matrix
+        glm::mat4 proj = glm::ortho(-4.0f, 4.0f, -3.0f, 3.0f, -1.0f, 1.0f);
+
         //Build and compile shader program
         Shader shaderProgram("res/shader/shader.vert", "res/shader/shader.frag");
         shaderProgram.Bind();
         shaderProgram.SetUniform4f("u_color", 0.8, 0.5, 0.2, 1.0);
+        shaderProgram.SetUniformMat4f("u_MVP", proj);
 
         //Load Texture
         Texture texture("res/texture/image.png");
