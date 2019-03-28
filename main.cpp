@@ -9,6 +9,10 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw.h"
+#include "imgui/imgui_impl_opengl3.h"
+
 // Window dimensions
 const int WIDTH = 800, HEIGHT = 600;
 
@@ -88,12 +92,12 @@ int main()
 
         //Setting MVP matrix
         glm::mat4 proj = glm::ortho(-4.0f, 4.0f, -3.0f, 3.0f, -1.0f, 1.0f);
+        glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, 0.0f, 0.0f));
 
         //Build and compile shader program
         Shader shaderProgram("res/shader/shader.vert", "res/shader/shader.frag");
         shaderProgram.Bind();
         shaderProgram.SetUniform4f("u_color", 0.8, 0.5, 0.2, 1.0);
-        shaderProgram.SetUniformMat4f("u_MVP", proj);
 
         //Load Texture
         Texture texture("res/texture/image.png");
@@ -105,6 +109,14 @@ int main()
 
         Renderer renderer;
 
+        ImGui::CreateContext();
+        ImGuiIO& io = ImGui::GetIO(); (void)io;
+        ImGui::StyleColorsDark();
+        ImGui_ImplGlfw_InitForOpenGL(window, true);
+        ImGui_ImplOpenGL3_Init("#version 330 core");
+
+        glm::vec3 translation(2.0f, 2.0f, 0.0f);
+
         // Game loop
         while ( !glfwWindowShouldClose( window ) )
         {
@@ -115,17 +127,39 @@ int main()
             // Clear the colorbuffer
             renderer.Clear();
 
+            // Start the Dear ImGui frame
+            ImGui_ImplOpenGL3_NewFrame();
+            ImGui_ImplGlfw_NewFrame();
+
+            glm::mat4 model = glm::translate(glm::mat4(1.0f), translation);
+            glm::mat4 mvp = proj * view * model;
+
             // Draw our first triangle
             shaderProgram.Bind();
             texture.Bind(0);
             shaderProgram.SetUniform1i("u_Texture", 0);
+            shaderProgram.SetUniformMat4f("u_MVP", mvp);
 
             renderer.Draw(vao, ibo, shaderProgram);
+
+            ImGui::NewFrame();
+            {
+                ImGui::SliderFloat3("Translation", &translation.x, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+                ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+            }
+
+            ImGui::Render();
+            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
             // Swap the screen buffers
             glfwSwapBuffers( window );
         }
     }
+
+    // Cleanup
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
     // Terminate GLFW, clearing any resources allocated by GLFW.
     glfwTerminate( );
 
