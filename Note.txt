@@ -1,0 +1,3 @@
+Render multiple objects:
+    - Solution1: Use many MVP matrix. This solution used to render identical objects. Then call draw API multiple times
+    - Solution2: Use many vertex buffer objects, each buffer used for a object. Then call draw API one time.

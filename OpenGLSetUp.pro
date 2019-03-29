@@ -11,6 +11,9 @@ CONFIG -= app_bundle
 DEFINES += QT_DEPRECATED_WARNINGS
 DEFINES += GLEW_STATIC
 
+#If want to use test framework please turn on this define
+#DEFINES += USE_TEST_FRAMEWORK
+
 # You can also make your code fail to compile if you use deprecated APIs.
 # In order to do so, uncomment the following line.
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
@@ -31,7 +34,9 @@ SOURCES += main.cpp \
     imgui/imgui_impl_glfw.cpp \
     imgui/imgui_impl_opengl3.cpp \
     imgui/imgui_widgets.cpp \
-    imgui/imgui.cpp
+    imgui/imgui.cpp \
+    test_framework/test.cpp \
+    test_framework/test_clearcolor.cpp
 
 TEMPLATE = app
 
@@ -75,7 +80,9 @@ HEADERS += \
     imgui/imgui.h \
     imgui/imstb_rectpack.h \
     imgui/imstb_textedit.h \
-    imgui/imstb_truetype.h
+    imgui/imstb_truetype.h \
+    test_framework/test.h \
+    test_framework/test_clearcolor.h
 
 
 #fix warning when cast to void*

@@ -13,6 +13,11 @@
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
 
+#ifdef USE_TEST_FRAMEWORK
+#include "test_framework/test.h"
+#include "test_framework/test_clearcolor.h"
+#endif
+
 // Window dimensions
 const int WIDTH = 800, HEIGHT = 600;
 
@@ -60,6 +65,57 @@ int main()
     GLCall(glEnable( GL_BLEND ));
     GLCall(glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA ));
 
+#ifdef USE_TEST_FRAMEWORK
+    Renderer renderer;
+
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    ImGui::StyleColorsDark();
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init("#version 330 core");
+
+    test::Test* currentTest = nullptr;
+    test::TestMenu* testMenu = new test::TestMenu(currentTest);
+    currentTest = testMenu;
+
+    testMenu->RegisterTest<test::Test_ClearColor>("Clear Color");
+    // Game loop
+    while ( !glfwWindowShouldClose( window ) )
+    {
+        glfwPollEvents( );
+
+        renderer.Clear();
+
+        // Start the Dear ImGui frame
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
+        if(currentTest)
+        {
+            currentTest->OnUpdate(0.0f);
+            currentTest->OnRender();
+            ImGui::Begin("Test");
+            if(currentTest != testMenu && ImGui::Button("<-"))
+            {
+                delete currentTest;
+                currentTest = testMenu;
+            }
+            currentTest->OnImguiRender();
+            ImGui::End();
+        }
+
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+        glfwSwapBuffers( window );
+    }
+
+    // Cleanup
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
+#else
     // Set up vertex data (and buffer(s)) and attribute pointers
     float vertices[] =
     {
@@ -160,6 +216,8 @@ int main()
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
+
+#endif
     // Terminate GLFW, clearing any resources allocated by GLFW.
     glfwTerminate( );
 
