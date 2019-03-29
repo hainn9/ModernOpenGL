@@ -1,10 +1,17 @@
 #ifndef TEST_H
 #define TEST_H
 
-#include "opengl_debug.h"
-#include "imgui/imgui.h"
 #include <vector>
 #include <functional>
+
+#include "opengl_debug.h"
+#include "imgui/imgui.h"
+
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+
+#include "renderer.h"
+#include "texture.h"
 
 namespace test {
 

@@ -36,7 +36,8 @@ SOURCES += main.cpp \
     imgui/imgui_widgets.cpp \
     imgui/imgui.cpp \
     test_framework/test.cpp \
-    test_framework/test_clearcolor.cpp
+    test_framework/test_clearcolor.cpp \
+    test_framework/test_texture2d.cpp
 
 TEMPLATE = app
 
@@ -82,7 +83,8 @@ HEADERS += \
     imgui/imstb_textedit.h \
     imgui/imstb_truetype.h \
     test_framework/test.h \
-    test_framework/test_clearcolor.h
+    test_framework/test_clearcolor.h \
+    test_framework/test_texture2d.h
 
 
 #fix warning when cast to void*

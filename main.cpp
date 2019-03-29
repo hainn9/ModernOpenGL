@@ -16,6 +16,7 @@
 #ifdef USE_TEST_FRAMEWORK
 #include "test_framework/test.h"
 #include "test_framework/test_clearcolor.h"
+#include "test_framework/test_texture2d.h"
 #endif
 
 // Window dimensions
@@ -62,8 +63,6 @@ int main()
 
     // Define the viewport dimensions
     GLCall(glViewport( 0, 0, screenWidth, screenHeight ));
-    GLCall(glEnable( GL_BLEND ));
-    GLCall(glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA ));
 
 #ifdef USE_TEST_FRAMEWORK
     Renderer renderer;
@@ -79,6 +78,7 @@ int main()
     currentTest = testMenu;
 
     testMenu->RegisterTest<test::Test_ClearColor>("Clear Color");
+    testMenu->RegisterTest<test::Test_Texture2D>("Texture 2D");
     // Game loop
     while ( !glfwWindowShouldClose( window ) )
     {
@@ -116,21 +116,24 @@ int main()
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
 #else
-    // Set up vertex data (and buffer(s)) and attribute pointers
-    float vertices[] =
-    {
-        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,// Bottom-Left
-        0.5f, -0.5f, 0.0f, 1.0f, 0.0f,// Bottom-Right
-        0.5f,  0.5f, 0.0f, 1.0f, 1.0f,// Top-Right
-        -0.5f, 0.5f, 0.0f, 0.0f, 1.0f  // Top-Left
-    };
 
-    unsigned int indices[] =
     {
-        0, 1, 2,
-        2, 3, 0
-    };
-    {
+        GLCall(glEnable( GL_BLEND ));
+        GLCall(glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA ));
+        // Set up vertex data (and buffer(s)) and attribute pointers
+        float vertices[] =
+        {
+            -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,// Bottom-Left
+            0.5f, -0.5f, 0.0f, 1.0f, 0.0f,// Bottom-Right
+            0.5f,  0.5f, 0.0f, 1.0f, 1.0f,// Top-Right
+            -0.5f, 0.5f, 0.0f, 0.0f, 1.0f  // Top-Left
+        };
+
+        unsigned int indices[] =
+        {
+            0, 1, 2,
+            2, 3, 0
+        };
         VertexArray vao;
 
         // Bind the Vertex Array Object first, then bind and set vertex buffer(s) and attribute pointer(s).
